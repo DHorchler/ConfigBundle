@@ -1,6 +1,6 @@
 <?php
-// src/DH/ConfigBundle/Entity/Settings.php
-namespace DH\ConfigBundle\Entity;
+// src/DHorchler/ConfigBundle/Entity/Settings.php
+namespace DHorchler\ConfigBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 

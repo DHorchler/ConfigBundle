@@ -1,6 +1,6 @@
 <?php
 
-namespace DH\ConfigBundle\Admin;
+namespace DHorchler\ConfigBundle\Admin;
 
 use Sonata\AdminBundle\Admin\Admin;
 use Sonata\AdminBundle\Form\FormMapper;

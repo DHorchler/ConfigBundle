@@ -1,9 +1,9 @@
 <?php
 // src/dh/ConfigBundle/DataFixtures/ORM/SettingsFixtures.php
 
-namespace dh\SettingsBundle\DataFixtures\ORM;
+namespace DH\ConfigBundle\DataFixtures\ORM;
 
-use dh\SettingsBundle\Entity\Settings;
+use DH\ConfigBundle\Entity\Settings;
 use Doctrine\Common\DataFixtures\FixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 

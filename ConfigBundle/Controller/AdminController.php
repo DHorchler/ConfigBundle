@@ -1,6 +1,6 @@
 <?php
-// src/DH\ConfigBundle/Controller/AdminController.php
-namespace DH\ConfigBundle\Controller;
+// src/DHorchler\ConfigBundle/Controller/AdminController.php
+namespace DHorchler\ConfigBundle\Controller;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;

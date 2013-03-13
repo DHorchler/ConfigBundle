@@ -1,6 +1,6 @@
 <?php
 
-namespace DH\ConfigBundle\Controller;
+namespace DHorchler\ConfigBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
