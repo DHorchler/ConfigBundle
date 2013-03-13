@@ -1,0 +1,38 @@
+{% extends 'SonataAdminBundle:CRUD:base_edit.html.twig' %}
+{% block stylesheets %}
+    {{ parent() }}
+    <style media="screen" type="text/css">
+        .defaultTextActive { color: rgb(200,200,200); font-style: italic; }
+    </style>
+{% endblock %}
+{% block javascripts %}
+    {{ parent() }}
+    <script language="javascript">
+    <!--
+    $(document).ready(function()
+    {
+        $(".defaultText").focus(function(srcc)
+        {
+            if ($(this).val() == $(this)[0].title)
+            {
+                $(this).removeClass("defaultTextActive");
+                $(this).val("");
+            }
+        });
+
+        $(".defaultText").blur(function()
+        {
+            if ($(this).val() == "")
+            {
+                $(this).addClass("defaultTextActive");
+                $(this).val($(this)[0].title);
+            }
+        });
+
+        $(".defaultText").blur();
+        $(":submit").click(validate);
+        function validate() {$('form input').each(function(i,e) {if ($(e).attr('title') == $(e).val()) $(e).val('');});}
+    });
+    //-->
+    </script>
+{% endblock %}

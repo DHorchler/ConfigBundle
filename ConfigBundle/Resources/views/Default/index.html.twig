@@ -1,0 +1,19 @@
+{% macro array_table(array) %}
+    {% import _self as table %}    
+    {% if array[0] is defined %}
+        <table border="1">
+        {% for row in array %}
+            <tr>
+                {% for entry in row %}
+                    <td>{{ table.array_table(entry) }}</td>
+                {% endfor %}
+            </tr>
+        {% endfor %}
+        </table>
+{% else %}
+        {{ array }}
+    {% endif %}
+{% endmacro %}
+<H1>settings:</H1>
+{% import _self as table %}
+{{ table.array_table(settings) }}

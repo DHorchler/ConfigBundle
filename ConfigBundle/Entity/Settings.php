@@ -1,9 +1,8 @@
 <?php
-// src/dh/SettingsBundle/Entity/Settings.php
-namespace dh\SettingsBundle\Entity;
+// src/DH/ConfigBundle/Entity/Settings.php
+namespace DH\ConfigBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity
@@ -13,13 +12,20 @@ class Settings
 {
     public function __construct()
     {
-        $this->updated = new \DateTime;;
+        $this->updated = new \DateTime;
+        $this->name = '';
     }
+
+    /**
+     * @ORM\Id
+     * @ORM\Column(type="integer")
+     * @ORM\GeneratedValue(strategy="AUTO")
+     */
+    protected $id;
+
     /**
      * @var string
-     * @ORM\Id
      * @ORM\Column(name="name", type="string", nullable=false, unique=true)
-     * @Assert\NotBlank
      */
     protected $name;
 
@@ -53,8 +59,19 @@ class Settings
     protected $section;
 
     /**
+     * @var string
+     * @ORM\Column(name="min", type="string", nullable=true)
+     */
+    protected $min;
+
+    /**
+     * @var string
+     * @ORM\Column(name="max", type="string", nullable=true)
+     */
+    protected $max;
+
+    /**
      * @ORM\Column(type="datetime")
-     * @Assert\NotNull()
      */
     protected $updated;
 
@@ -66,6 +83,14 @@ class Settings
             return $this->name;
     }
 
+    public function setType($type) {
+            $this->type = $type;
+    }
+
+    public function getType() {
+            return $this->type;
+    }
+
     public function setValue($value) {
             $this->value = $value;
     }
@@ -74,12 +99,39 @@ class Settings
             return $this->value;
     }
 
+    public function setMin($min) {
+            $this->min = $min;
+    }
+
+    public function getMin() {
+            return $this->min;
+    }
+
+    public function setMax($max) {
+            $this->max = $max;
+    }
+
+    public function getMax() {
+            return $this->max;
+    }
+
     public function setSection($section) {
             $this->section = $section;
     }
 
     public function getSection() {
             return $this->section;
+    }
+
+    /**
+     * Get id
+     *
+     * @return integer 
+     */
+    public function setId($id)
+    {
+        $this->id = $id;
+        return $this;
     }
 
     /**
@@ -162,7 +214,7 @@ class Settings
     }
     public function __toString()
     {
-        return $this->name;
+        return 'Settings:'.$this->name;
     }
 
     /**
