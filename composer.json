@@ -1,28 +1,29 @@
 {
-"name": "dhorchler/config-bundle",
-"type": "symfony-bundle",
-"description": "Database-stored settings that are administrables by Sonata Admin Bundle.",
-"keywords": ["symfony2", "config", "settings", "Sonata Admin"],
-"homepage": "https://github.com/Dhorchler/DhorchlerConfigBundle",
-"license": "MIT",
-"authors": [
-{
-"name": "Detlef Horchler",
-"email": "dh@surnet.cl"
-},
-{
-"name": "Symfony Community",
-"homepage": "https://github.com/DHorchler/DHorchlerConfigBundle"
-}
-],
-"require": {
-"php": ">=5.3.3",
-"symfony/framework-bundle": ">=2.2-dev,<2.4-dev"
-},
-"autoload": {
-"psr-0": {
-"DHorchler\\ConfigBundle": ""
-}
-},
-"target-dir": "DHorchler/ConfigBundle"
+    "name": "dhorchler/config-bundle",
+    "type": "symfony-bundle",
+    "description": "Database-stored settings that are administrables by Sonata Admin Bundle.",
+    "keywords": ["symfony2", "config", "settings", "Sonata Admin"],
+    "homepage": "https://github.com/Dhorchler/DhorchlerConfigBundle",
+    "license": "MIT",
+    "authors": [
+    {
+        "name": "Detlef Horchler",
+        "email": "dh@surnet.cl"
+    },
+    {
+        "name": "Symfony Community",
+        "homepage": "https://github.com/DHorchler/DHorchlerConfigBundle"
+    }
+    ],
+    "require": {
+        "php": ">=5.3.3",
+        "symfony/framework-bundle": ">=2.2-dev,<2.4-dev",
+        "sonata-project/admin-bundle": "2.2.*@dev"
+    },
+    "autoload": {
+        "psr-0": {
+            "DHorchler\\ConfigBundle": ""
+        }
+    },
+    "target-dir": "DHorchler/ConfigBundle"
 }
