@@ -1,7 +1,0 @@
-parameters:
-#    dh_config.example.class: DH\ConfigBundle\Example
-
-services:
-#    dh_config.example:
-#        class: %dh_config.example.class%
-#        arguments: [@service_id, "plain_value", %parameter%]

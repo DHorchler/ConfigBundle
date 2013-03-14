@@ -20,6 +20,7 @@ class ConfigAdmin extends Admin {
             ->add('type')
             ->add('min')
             ->add('max')
+            ->add('choices')
             ->add('section')
             ->add('updated')
         ;
@@ -35,18 +36,20 @@ class ConfigAdmin extends Admin {
 
     protected function configureFormFields(FormMapper $mapper) {
         $mapper
-            ->add('name', null, array('attr' => array('class' => 'defaultTextActive', 'title' => 'enter name')))
-            ->add('defaultValue', null, array('required' => false, 'attr' => array('class' => 'defaultTextActive', 'title' => 'enter default value')))
-            ->add('currentValue', null, array('required' => true, 'attr' => array('class' => 'defaultTextActive', 'title' => 'enter current value')))
-            ->add('description', null, array('required' => true, 'attr' => array('class' => 'defaultTextActive', 'title' => 'enter description')))
-            ->add('type', 'choice', array('choices' => array('string' => 'string', 'integer' => 'integer', 'float' => 'float', 'date' => 'date', 'datetime' => 'datetime', 'timestamp' => 'timestamp', 'choice' => 'choice', 'multiplechoice' => 'multiplechoice')))
-            ->add('min', null, array('required' => false, 'attr' => array('class' => 'defaultTextActive', 'title' => 'enter minimum value (optional)')))
-            ->add('max', null, array('required' => false, 'attr' => array('class' => 'defaultTextActive', 'title' => 'enter maximum value (optional)')))
-            ->add('section', null, array('attr' => array('class' => 'defaultTextActive', 'title' => 'enter section name (optional)')))
+            ->add('name', null, array('attr' => array('class' => 'defaultText', 'title' => 'enter name')))
+            ->add('defaultValue', null, array('required' => false, 'attr' => array('class' => 'defaultText', 'title' => 'enter default value')))
+            ->add('currentValue', null, array('required' => true, 'attr' => array('class' => 'defaultText', 'title' => 'enter current value')))
+            ->add('description', null, array('required' => true, 'attr' => array('class' => 'defaultText', 'title' => 'enter description')))
+            ->add('type', 'choice', array('choices' => array('string' => 'string', 'integer' => 'integer', 'float' => 'float', 'date' => 'date', 'datetime' => 'datetime', 'choice' => 'choice', 'multiplechoice' => 'multiplechoice')))
+            ->add('min', null, array('required' => false, 'attr' => array('class' => 'defaultText', 'title' => 'enter minimum value (optional)')))
+            ->add('max', null, array('required' => false, 'attr' => array('class' => 'defaultText', 'title' => 'enter maximum value (optional)')))
+            ->add('choices', null, array('required' => false, 'attr' => array('class' => 'defaultText', 'title' => 'enter comma separated choices (optional)')))
+            ->add('section', null, array('attr' => array('class' => 'defaultText', 'title' => 'enter section name (optional)')))
             ->add('updated', 'datetime', array('required' => false, 'read_only' => true))
             ->setHelps(array(
                 'min' => 'If you enter a minimum value, it will act as a constraint on the default and current value.',
                 'max' => 'If you enter a maximum value, it will act as a constraint on the default and current value.',
+                'choices' => 'Only for data types choice and multiplechoice.',
                 'section' => 'The section parameter is provided for your convenience and for better readability if you have a large number of settings.'
             ))
         ;
@@ -66,6 +69,11 @@ class ConfigAdmin extends Admin {
                 elseif ($object->getMin() != '') {$min = new \DateTime($object->getMin());$object->setMin($min->getTimestamp());}
                 if (is_object($object->getMax())) $object->setMax($object->getMax()->getTimestamp());
                 elseif ($object->getMax() != '') {$max = new \DateTime($object->getMax());$object->setMax($max->getTimestamp());}
+                break;
+            case 'multiplechoice':
+                if (is_array($object->getDefaultValue())) $object->setDefaultValue(implode(',', $object->getDefaultValue()));
+                if (is_array($object->getCurrentValue())) $object->setCurrentValue(implode(',', $object->getCurrentValue()));
+                break;
         }
         if ($object->getMin() != '' AND $object->getMax() != '' AND $object->getMin() > $object->getMax())
         {

@@ -78,7 +78,7 @@ class AdminController extends \Sonata\AdminBundle\Controller\CRUDController
     private function manageTypes($object, $form)
     {
             $form->remove('type');
-            $form->add('type', 'choice', array('disabled' => true, 'choices' => array($object->getType(), 'string', 'integer', 'float', 'date', 'datetime', 'timestamp', 'range', 'choice', 'multiplechoice')));
+            $form->add('type', 'choice', array('disabled' => true, 'choices' => array($object->getType(), 'string', 'integer', 'float', 'date', 'datetime', 'choice', 'multiplechoice')));
             $type = (string)$object->getType();
             switch ($type)
             {
@@ -131,6 +131,26 @@ class AdminController extends \Sonata\AdminBundle\Controller\CRUDController
                         $form->add('max', 'date', array('required' => false));
                     }
                     //echo $this->admin->getFormFieldDescription('min')->getHelp();
+                    break;
+                case 'choice':
+                case 'multiplechoice':
+                    $choices = array();
+                    $choicesRaw = explode(',', $object->getChoices());
+                    foreach ($choicesRaw AS $cr) $choices[$cr] = $cr;
+                    $defChoicesRaw = array();
+                    $curChoicesRaw = array();
+                    $defChoicesRaw = explode(',', $object->getDefaultValue());
+                    foreach ($defChoicesRaw AS $dcr) $defChoices[$dcr] = $dcr;
+                    $object->setDefaultValue($defChoices);
+                    $defChoices = ($type == 'choice')? array('choices' => $defChoices): array('multiple' => true, 'choices' => $choices);
+                    $form->remove('defaultValue');
+                    $form->add('defaultValue', 'choice', $defChoices);
+                    $curChoices = explode(',', $object->getCurrentValue());
+                    foreach ($curChoicesRaw AS $ccr) $curChoices[$ccr] = $ccr;
+                    $object->setCurrentValue($curChoices);
+                    $curChoices = ($type == 'choice')? array('choices' => $curChoices): array('multiple' => true, 'choices' => $choices);
+                    $form->remove('currentValue');
+                    $form->add('currentValue', 'choice', $curChoices);
                     break;
                 case 'url':
                 case 'email':

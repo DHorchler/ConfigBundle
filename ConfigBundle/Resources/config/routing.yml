@@ -1,3 +1,0 @@
-dh_config_homepage:
-    pattern:  /hello/{name}
-    defaults: { _controller: DHConfigBundle:Default:index }

@@ -11,8 +11,8 @@
     <!--
     $(document).ready(function()
     {
-        $(".defaultText").focus(function(srcc)
-        {
+        $(".defaultText").focus(function()
+        {console.log('focus'+$(this).val());
             if ($(this).val() == $(this)[0].title)
             {
                 $(this).removeClass("defaultTextActive");
@@ -21,7 +21,7 @@
         });
 
         $(".defaultText").blur(function()
-        {
+        {console.log('blur'+$(this).val());
             if ($(this).val() == "")
             {
                 $(this).addClass("defaultTextActive");
@@ -30,8 +30,8 @@
         });
 
         $(".defaultText").blur();
-        $(":submit").click(validate);
         function validate() {$('form input').each(function(i,e) {if ($(e).attr('title') == $(e).val()) $(e).val('');});}
+        $(":submit").click(validate);
     });
     //-->
     </script>
