@@ -155,6 +155,8 @@ class AdminController extends \Sonata\AdminBundle\Controller\CRUDController
                 case 'url':
                 case 'email':
                 case 'string';
+                case 'choice';
+                case 'multiplechoice';
                     $form->remove('min');
                     $form->add('min', 'hidden');
                     $form->remove('max');
