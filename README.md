@@ -95,8 +95,12 @@ After all this start managing your settings from the Sonata Admin backend.
 #Usage example:
 <pre>
 $this->em = $this->getDoctrine()->getEntityManager();
-        $settings1 = $this->em->createQueryBuilder()->select('s.name, s.currentValue')->from('DHConfigBundle:Settings', 's')->getQuery()->getResult();
-        foreach ($settings1 AS $setting) $settings[$setting['name']] = $setting['currentValue']
+$settings1 = $this->em->createQueryBuilder()
+    ->select('s.name, s.currentValue')
+    ->from('DHorchlerConfigBundle:Settings', 's')
+    ->getQuery()
+    ->getResult();
+foreach ($settings1 AS $setting) $settings[$setting['name']] = $setting['currentValue']
 </pre>
 
 #Todo:
