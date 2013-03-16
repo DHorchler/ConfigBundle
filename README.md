@@ -107,6 +107,9 @@ foreach ($settings1 AS $setting) $settings[$setting['name']] = $setting['current
 
 ![Screen shot list settings](https://raw.github.com/DHorchler/ConfigBundle/master/srceen_shot_list_settings.png)
 
+![Screen shot edit integer settings](https://github.com/DHorchler/ConfigBundle/blob/master/srceen_shot_edit_integer_setting.png)
+
+![Screen shot edit date settings](https://github.com/DHorchler/ConfigBundle/blob/master/srceen_shot_edit_date_setting.png)
 
 #Todo:
 - add more tests
