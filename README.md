@@ -103,6 +103,11 @@ $settings1 = $this->em->createQueryBuilder()
 foreach ($settings1 AS $setting) $settings[$setting['name']] = $setting['currentValue']
 </pre>
 
+#Preview:
+
+![Screen shot list settings](https://raw.github.com/DHorchler/ConfigBundle/master/srceen_shot_list_settings.png)
+
+
 #Todo:
 - add more tests
 - client side validation
