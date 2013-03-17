@@ -24,6 +24,6 @@
         "psr-0": {
             "DHorchler\\ConfigBundle": ""
         },
-        target-dir": "DHorchler/ConsoleBundle"
+        target-dir": "DHorchler/ConfigBundle"
     }
 }
