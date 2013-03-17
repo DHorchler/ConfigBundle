@@ -152,16 +152,6 @@ class AdminController extends \Sonata\AdminBundle\Controller\CRUDController
                     $form->remove('currentValue');
                     $form->add('currentValue', 'choice', $curChoices);
                     break;
-                case 'url':
-                case 'email':
-                case 'string';
-                case 'choice';
-                case 'multiplechoice';
-                    $form->remove('min');
-                    $form->add('min', 'hidden');
-                    $form->remove('max');
-                    $form->add('max', 'hidden');
-                    break;
                 default://had to do this to show the violation text
                     $form->remove('defaultValue')->add('defaultValue', null, array('required' => false, 'attr' => array('class' => 'defaultTextActive', 'title' => 'enter default value')))
                         ->remove('currentValue')->add('currentValue', null, array('required' => true, 'attr' => array('class' => 'defaultTextActive', 'title' => 'enter current value')))
@@ -169,5 +159,21 @@ class AdminController extends \Sonata\AdminBundle\Controller\CRUDController
                         ->remove('max')->add('max', null, array('required' => false, 'attr' => array('class' => 'defaultTextActive', 'title' => 'enter maximum value (optional)')));
                     break;
             }            
+            switch ($type)
+            {
+                case 'url':
+                case 'email':
+                case 'string':
+                case 'choice':
+                case 'multiplechoice':
+                    $form->remove('min');
+                    $form->add('min', 'hidden');
+                    $form->remove('max');
+                    $form->add('max', 'hidden');
+                    break;
+                default:                
+                    $form->remove('choices');
+                    $form->add('choices', 'hidden');
+            }
     }
 }

@@ -1,7 +1,7 @@
 {
     "name": "dhorchler/config-bundle",
     "type": "symfony-bundle",
-    "description": "Database-stored settings that are administrables by Sonata Admin Bundle.",
+    "description": "Database-stored settings that are administrable in Sonata Admin Bundle.",
     "keywords": ["symfony2", "config", "settings", "Sonata Admin"],
     "homepage": "https://github.com/Dhorchler/DhorchlerConfigBundle",
     "license": "MIT",
