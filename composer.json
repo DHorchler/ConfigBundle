@@ -25,5 +25,5 @@
             "DHorchler\\ConfigBundle": ""
         }
     },
-    "target-dir": ""
+    "target-dir": "DHorchler/ConfigBundle"
 }
