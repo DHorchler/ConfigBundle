@@ -1,13 +1,14 @@
 #Information
 
 DHorchlerConfigBundle stores configuration settings in an ORM database and makes them administrable in Sonata Admin Bundle.
-These settings are similar to those defined in parameters.yml or parameters.ini but can be modified at runtime by a Sonata admin user.
+These settings can be used anywhere in your project and can be modified at runtime by a Sonata admin user.
 
 #Features:
 - individual validations for different data types
 - individual constrains with easily customizable error texts
 - jQuery supported form field default values
 
+###Currently supported data types: string, integer, float, date, datetime, choice, multiplechoice.
 
 #Installation
 
@@ -90,17 +91,17 @@ services:
 
 
 After all this start managing your settings from the Sonata Admin backend.
-###Currently supported data types: string, integer, float, date, datetime, choice, multiplechoice.
+
 
 #Usage example:
 <pre>
 $this->em = $this->getDoctrine()->getEntityManager();
-$settings1 = $this->em->createQueryBuilder()
+$settingsRaw = $this->em->createQueryBuilder()
     ->select('s.name, s.currentValue')
     ->from('DHorchlerConfigBundle:Settings', 's')
     ->getQuery()
     ->getResult();
-foreach ($settings1 AS $setting) $settings[$setting['name']] = $setting['currentValue']
+foreach ($settingsRaw AS $setting) $settings[$setting['name']] = $setting['currentValue']
 </pre>
 
 #Preview:
