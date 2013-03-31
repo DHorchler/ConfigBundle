@@ -18,6 +18,7 @@ class ConfigTestController extends WebTestCase
     public function testIndex()
     {
         //dashboard
+        if ($this->verbose) {ob_flush(); echo PHP_EOL.'start dashboard test, going to list page'.PHP_EOL;}
         $crawler = $this->client->request('GET', '/admin/dashboard');
         $this->assertTrue($crawler->filter('html:contains("Settings")')->count() > 0, 'string "Settings" not found on dashboad page');
         $this->assertTrue($crawler->filter('html:contains("Add new")')->count() > 0, 'string "Add new" not found on dashboad page');
@@ -39,6 +40,8 @@ class ConfigTestController extends WebTestCase
         
         //data types
         $this->dataTypeTest('integer', 'phpunit integer test1', 'integer added by phpunit, test1', 10, 20, 1, 99);
+        $this->dataTypeTest('choice', 'phpunit choices test1', 'choices added by phpunit, test1', 'a', 'b', '', '', 'a,b,c,d,e');
+        $this->dataTypeTest('multiplechoice', 'phpunit multiplechoices test1', 'multiplechoices added by phpunit, test1', 'a,b', 'b,c,d', '', '', 'a,b,c,d,e');
     }
     
     public function dataTypeTest($dataType, $name, $description, $defaultValue, $currentValue, $min = '', $max = '', $choices = '')
@@ -92,11 +95,32 @@ class ConfigTestController extends WebTestCase
         $this->assertTrue($crawler->filter('html:contains("Currentvalue")')->count() > 0, 'string "Currentvalue" not found on edit page');
         $this->assertTrue($crawler->filter('html:contains("Description")')->count() > 0, 'string "Description" not found on edit page');
         $this->assertTrue($crawler->filter('html:contains("Type")')->count() > 0, 'string "Type" not found on edit page');
-        $this->assertTrue($crawler->filter('html:contains("Min")')->count() > 0, 'string "Min" not found on edit page');
-        $this->assertTrue($crawler->filter('html:contains("Max")')->count() > 0, 'string "Max" not found on edit page');
         $this->assertTrue($crawler->filter('html:contains("Section")')->count() > 0, 'string "Section" not found on edit page');
         $this->assertTrue($crawler->filter('html:contains("Updated")')->count() > 0, 'string "Updated" not found on edit page');
-        $this->assertTrue($crawler->filter('html:contains("'.$name.'")')->count() > 0, 'name string "'.$name.'" not found on edit page');
+        $this->assertTrue($crawler->filterXPath('//input[@value="'.$name.'"]')->count() > 0, 'name string "'.$name.'" not found on edit page');
+        $this->assertTrue($crawler->filterXPath('//input[@value="'.$description.'"]')->count() > 0, 'description string "'.$name.'" not found on edit page');
+        switch ($dataType)
+        {
+            case 'integer':
+            case 'float':
+            case 'time':
+            case 'datetime':
+                $this->assertTrue($crawler->filterXPath('//input[@value="'.$defaultValue.'"]')->count() > 0, 'default value "'.$defaultValue.'" not found on edit page');
+                $this->assertTrue($crawler->filterXPath('//input[@value="'.$currentValue.'"]')->count() > 0, 'current value "'.$currentValue.'" not found on edit page');
+                $this->assertTrue($crawler->filter('html:contains("Min")')->count() > 0, 'string "Min" not found on edit page');
+                $this->assertTrue($crawler->filter('html:contains("Max")')->count() > 0, 'string "Max" not found on edit page');
+                $this->assertFalse($crawler->filter('html:contains("Choices")')->count() > 0, 'string "Choices" found on edit page');
+                break;
+            case 'choice':
+                $this->assertTrue($crawler->filterXPath('//option[@value="'.$defaultValue.'" and @selected="selected"]')->count() > 0, 'default value "'.$defaultValue.'" not selected on edit page');
+                $this->assertTrue($crawler->filterXPath('//option[@value="'.$currentValue.'" and @selected="selected"]')->count() > 0, 'current value "'.$currentValue.'" not selected on edit page');
+            case 'multiplechoice':
+                //$this->assertTrue($crawler->filterXPath('//option[@value="'.$choices.'"]')->count() > 0, 'choices "'.$choices.'" not found on edit page');
+                $this->assertTrue($crawler->filter('html:contains("Choices")')->count() > 0, 'string "Choices" not found on edit page');
+                $this->assertFalse($crawler->filter('html:contains("Min")')->count() > 0, 'string "Min" found on edit page');
+                $this->assertFalse($crawler->filter('html:contains("Max")')->count() > 0, 'string "Max" found on edit page');
+                break;
+        }
         $form = $crawler->selectButton('Update')->form();
         $uri = $form->getUri();
         $token = substr($uri, strpos($uri, 'uniqid=')+7);//get form token
@@ -117,7 +141,7 @@ class ConfigTestController extends WebTestCase
         if ($max != '') $form[$token.'[max]'] = $max;
         if ($choices != '') $form[$token.'[choices]'] = $choices;
         $crawler = $this->client->submit($form);
-        $this->assertTrue($this->client->getResponse()->isRedirect());//if no redirection takes place, most probably the element already exists. In that case delete it manually.
+        $this->assertTrue($this->client->getResponse()->isRedirect(), 'if no redirection takes place, most probably the element already exists. In that case delete it manually.');
         return $this->client->followRedirect();
     }
 

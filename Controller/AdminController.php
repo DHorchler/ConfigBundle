@@ -133,22 +133,32 @@ class AdminController extends \Sonata\AdminBundle\Controller\CRUDController
                     //echo $this->admin->getFormFieldDescription('min')->getHelp();
                     break;
                 case 'choice':
+                    $choices = array();
+                    $choicesRaw = explode(',', $object->getChoices());
+                    foreach ($choicesRaw AS $cr) $choices[$cr] = $cr;
+                    $defChoices = array('choices' => $choices);
+                    $form->remove('defaultValue');
+                    $form->add('defaultValue', 'choice', $defChoices);
+                    $curChoices = array('choices' => $choices);
+                    $form->remove('currentValue');
+                    $form->add('currentValue', 'choice', $curChoices);
+                    break;
                 case 'multiplechoice':
                     $choices = array();
                     $choicesRaw = explode(',', $object->getChoices());
                     foreach ($choicesRaw AS $cr) $choices[$cr] = $cr;
                     $defChoicesRaw = array();
-                    $curChoicesRaw = array();
                     $defChoicesRaw = explode(',', $object->getDefaultValue());
                     foreach ($defChoicesRaw AS $dcr) $defChoices[$dcr] = $dcr;
                     $object->setDefaultValue($defChoices);
-                    $defChoices = ($type == 'choice')? array('choices' => $defChoices): array('multiple' => true, 'choices' => $choices);
+                    $defChoices = array('multiple' => true, 'choices' => $choices);
                     $form->remove('defaultValue');
                     $form->add('defaultValue', 'choice', $defChoices);
+                    $curChoicesRaw = array();
                     $curChoices = explode(',', $object->getCurrentValue());
                     foreach ($curChoicesRaw AS $ccr) $curChoices[$ccr] = $ccr;
                     $object->setCurrentValue($curChoices);
-                    $curChoices = ($type == 'choice')? array('choices' => $curChoices): array('multiple' => true, 'choices' => $choices);
+                    $curChoices = array('multiple' => true, 'choices' => $choices);
                     $form->remove('currentValue');
                     $form->add('currentValue', 'choice', $curChoices);
                     break;
@@ -173,15 +183,27 @@ class AdminController extends \Sonata\AdminBundle\Controller\CRUDController
             }            
             switch ($type)
             {
+                case 'choice':
                 case 'multiplechoice':
                     $form->remove('min');
                     $form->add('min', 'hidden');
                     $form->remove('max');
                     $form->add('max', 'hidden');
                     break;
+                case 'integer':                
+                case 'float':                
+                case 'time':                
+                case 'datetime':                
+                    $form->remove('choices');
+                    $form->add('choices', 'hidden');
+                    break;
                 default:                
                     $form->remove('choices');
                     $form->add('choices', 'hidden');
+                    $form->remove('min');
+                    $form->add('min', 'hidden');
+                    $form->remove('max');
+                    $form->add('max', 'hidden');
             }
     }
 }
