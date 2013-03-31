@@ -40,7 +40,7 @@ class ConfigAdmin extends Admin {
             ->add('defaultValue', null, array('required' => false, 'attr' => array('class' => 'defaultText', 'title' => 'enter default value')))
             ->add('currentValue', null, array('required' => true, 'attr' => array('class' => 'defaultText', 'title' => 'enter current value')))
             ->add('description', null, array('required' => true, 'attr' => array('class' => 'defaultText', 'title' => 'enter description')))
-            ->add('type', 'choice', array('choices' => array('string' => 'string', 'integer' => 'integer', 'float' => 'float', 'date' => 'date', 'datetime' => 'datetime', 'choice' => 'choice', 'multiplechoice' => 'multiplechoice')))
+            ->add('type', 'choice', array('choices' => array('string' => 'string', 'textarea' => 'textarea', 'html' => 'html', 'integer' => 'integer', 'float' => 'float', 'date' => 'date', 'datetime' => 'datetime', 'choice' => 'choice', 'multiplechoice' => 'multiplechoice')))
             ->add('min', null, array('required' => false, 'attr' => array('class' => 'defaultText', 'title' => 'enter minimum value (optional)')))
             ->add('max', null, array('required' => false, 'attr' => array('class' => 'defaultText', 'title' => 'enter maximum value (optional)')))
             ->add('choices', null, array('required' => false, 'attr' => array('class' => 'defaultText', 'title' => 'enter comma separated choices (optional)')))

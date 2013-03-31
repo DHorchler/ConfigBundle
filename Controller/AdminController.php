@@ -67,10 +67,10 @@ class AdminController extends \Sonata\AdminBundle\Controller\CRUDController
 
         // set the theme for the current Admin Form
         $this->get('twig')->getExtension('form')->renderer->setTheme($view, $this->admin->getFormTheme());
-
+        if ($object->getType() == 'html') return $this->render($this->admin->getTemplate($templateKey), array('ckeditor' => true, 'action' => 'edit', 'form'   => $view,'action' => 'edit', 'object' => $object));
         return $this->render($this->admin->getTemplate($templateKey), array(
             'action' => 'edit',
-            'form'   => $view,
+            'form'   => $view,'action' => 'edit',
             'object' => $object,
         ));
     }
@@ -78,7 +78,7 @@ class AdminController extends \Sonata\AdminBundle\Controller\CRUDController
     private function manageTypes($object, $form)
     {
             $form->remove('type');
-            $form->add('type', 'choice', array('disabled' => true, 'choices' => array($object->getType(), 'string', 'integer', 'float', 'date', 'datetime', 'choice', 'multiplechoice')));
+            $form->add('type', 'choice', array('disabled' => true, 'choices' => array($object->getType(), 'string', 'integer', 'float', 'textarea', 'html', 'date', 'datetime', 'choice', 'multiplechoice')));
             $type = (string)$object->getType();
             switch ($type)
             {
@@ -152,6 +152,18 @@ class AdminController extends \Sonata\AdminBundle\Controller\CRUDController
                     $form->remove('currentValue');
                     $form->add('currentValue', 'choice', $curChoices);
                     break;
+                case 'textarea':
+                    $form->remove('defaultValue');
+                    $form->add('defaultValue', 'textarea');
+                    $form->remove('currentValue');
+                    $form->add('currentValue', 'textarea');
+                    break;
+                case 'html':
+                    $form->remove('defaultValue');
+                    $form->add('defaultValue', 'textarea', array('attr' => array('class' => 'ckeditor')));
+                    $form->remove('currentValue');
+                    $form->add('currentValue', 'textarea', array('attr' => array('class' => 'ckeditor')));
+                    break;
                 default://had to do this to show the violation text
                     $form->remove('defaultValue')->add('defaultValue', null, array('required' => false, 'attr' => array('class' => 'defaultTextActive', 'title' => 'enter default value')))
                         ->remove('currentValue')->add('currentValue', null, array('required' => true, 'attr' => array('class' => 'defaultTextActive', 'title' => 'enter current value')))
@@ -161,12 +173,6 @@ class AdminController extends \Sonata\AdminBundle\Controller\CRUDController
             }            
             switch ($type)
             {
-                case 'url':
-                case 'email':
-                case 'string':
-                case 'choice':
-                    $form->remove('choices');
-                    $form->add('choices', 'hidden');
                 case 'multiplechoice':
                     $form->remove('min');
                     $form->add('min', 'hidden');
