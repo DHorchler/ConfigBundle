@@ -1,6 +1,5 @@
 #Information
 
-This bundle has been discontinued
 
 DHorchlerConfigBundle stores configuration settings in an ORM database and makes them administrable in Sonata Admin Bundle.
 These settings can be used anywhere in your project and can be modified at runtime by a Sonata admin user.
