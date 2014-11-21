@@ -1,6 +1,6 @@
 #Information
 
-Branch 2.1 was tested with Symfony2.1
+Symfony 2.5 (under construction)
 
 DHorchlerConfigBundle stores configuration settings in an ORM database and makes them administrable in Sonata Admin Bundle.
 These settings can be used anywhere in your project and can be modified at runtime by a Sonata admin user.
