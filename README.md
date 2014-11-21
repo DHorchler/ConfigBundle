@@ -25,7 +25,7 @@ Let Composer download and install the bundle by first adding it to your composer
 
 {
     "require": {
-        "dhorchler/config-bundle": "dev-master"
+        "dhorchler/config-bundle": "2.1"
     }
 }
 </pre>
