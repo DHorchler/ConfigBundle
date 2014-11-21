@@ -1,5 +1,6 @@
 #Information
 
+branch 2.1 was tested with Symfony2.1
 
 DHorchlerConfigBundle stores configuration settings in an ORM database and makes them administrable in Sonata Admin Bundle.
 These settings can be used anywhere in your project and can be modified at runtime by a Sonata admin user.
@@ -9,7 +10,8 @@ These settings can be used anywhere in your project and can be modified at runti
 - individual constrains with easily customizable error texts
 - jQuery supported form field default values
 
-###Currently supported data types: string, integer, float, date, datetime, choice, multiplechoice.
+###Currently supported data types:
+string, integer, float, date, datetime, choice, multiplechoice.
 
 #Installation
 
