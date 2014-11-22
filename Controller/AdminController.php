@@ -30,7 +30,7 @@ class AdminController extends \Sonata\AdminBundle\Controller\CRUDController
         /** @var $form \Symfony\Component\Form\Form */
         $form = $this->admin->getForm();
         $form->setData($object);
-        if (strpos($object->__toString(), 'Settings:') === 0) $this->manageTypes($object, $form);//DH
+        if (strpos($object->__toString(), 'Settings:') === 0) $this->manageTypes($object, $form);
         if ($this->get('request')->getMethod() == 'POST') {
             $form->bind($this->get('request'));
 
@@ -39,8 +39,7 @@ class AdminController extends \Sonata\AdminBundle\Controller\CRUDController
             // persist if the form was valid and if in preview mode the preview was approved
             if ($isFormValid && (!$this->isInPreviewMode() || $this->isPreviewApproved())) {
                 $this->admin->update($object);
-                $this->get('session')->setFlash('sonata_flash_success', 'flash_edit_success');
-
+                $this->get('session')->getFlashBag()->add('sonata_flash_success', 'update success');
                 if ($this->isXmlHttpRequest()) {
                     return $this->renderJson(array(
                         'result'    => 'ok',
@@ -55,7 +54,7 @@ class AdminController extends \Sonata\AdminBundle\Controller\CRUDController
             // show an error message if the form failed validation
             if (!$isFormValid) {
                 if (!$this->isXmlHttpRequest()) {
-                    $this->get('session')->setFlash('sonata_flash_error', 'flash_edit_error');
+                    $this->get('session')->getFlashBag()->add('sonata_flash_error', 'edit error');
                 }
             } elseif ($this->isPreviewRequested()) {
                 // enable the preview template if the form was valid and preview was requested
@@ -108,33 +107,10 @@ class AdminController extends \Sonata\AdminBundle\Controller\CRUDController
                         else $object->setCurrentValue(new \DateTime(preg_replace('%(\d{4}) (\d{2}) (\d{2}) (\d{2}) (\d{2}) (\d{2})%', '$1-$2-$3 $4:$5:$6', $object->getCurrentValue())));
                         $form->add('currentValue', 'date');
                     }                    
-                    $form->remove('min');
-                    if ($object->getMin() == '')
-                    {
-                        $form->add('min', null, array('required' => false, 'attr' => array('class' => 'defaultText', 'title' => $format)));
-                    }
-                    else
-                    {
-                        if ($type == 'date') $object->setMin(new \DateTime(str_replace(' ', $separator, $object->getMin())));
-                        else $object->setMin(new \DateTime(preg_replace('%(\d{4}) (\d{2}) (\d{2}) (\d{2}) (\d{2}) (\d{2})%', '$1-$2-$3 $4:$5:$6', $object->getMin())));
-                        $form->add('min', 'date', array('required' => false));
-                    }                    
-                    $form->remove('max');
-                    if ($object->getMax() == '')
-                    {
-                        $form->add('max', null, array('required' => false, 'attr' => array('class' => 'defaultText', 'title' => $format)));
-                    }
-                    else
-                    {
-                        if ($type == 'date') $object->setMax(new \DateTime(str_replace(' ', '-', $object->getMax())));
-                        else $object->setMin(new \DateTime(preg_replace('%(\d{4}) (\d{2}) (\d{2}) (\d{2}) (\d{2}) (\d{2})%', '$1-$2-$3 $4:$5:$6', $object->getMin())));
-                        $form->add('max', 'date', array('required' => false));
-                    }
-                    //echo $this->admin->getFormFieldDescription('min')->getHelp();
                     break;
                 case 'choice':
                     $choices = array();
-                    $choicesRaw = explode(',', $object->getChoices());
+                    $choicesRaw = explode(',', str_replace('(', '', str_replace(')', '', $object->getFilter())));
                     foreach ($choicesRaw AS $cr) $choices[$cr] = $cr;
                     $defChoices = array('choices' => $choices);
                     $form->remove('defaultValue');
@@ -145,7 +121,7 @@ class AdminController extends \Sonata\AdminBundle\Controller\CRUDController
                     break;
                 case 'multiplechoice':
                     $choices = array();
-                    $choicesRaw = explode(',', $object->getChoices());
+                    $choicesRaw = explode(',', str_replace('(', '', str_replace(')', '', $object->getFilter())));
                     foreach ($choicesRaw AS $cr) $choices[$cr] = $cr;
                     $defChoicesRaw = array();
                     $defChoicesRaw = explode(',', $object->getDefaultValue());
@@ -176,34 +152,11 @@ class AdminController extends \Sonata\AdminBundle\Controller\CRUDController
                     break;
                 default://had to do this to show the violation text
                     $form->remove('defaultValue')->add('defaultValue', null, array('required' => false, 'attr' => array('class' => 'defaultTextActive', 'title' => 'enter default value')))
-                        ->remove('currentValue')->add('currentValue', null, array('required' => true, 'attr' => array('class' => 'defaultTextActive', 'title' => 'enter current value')))
-                        ->remove('min')->add('min', null, array('required' => false, 'attr' => array('class' => 'defaultTextActive', 'title' => 'enter minimum value (optional)')))
-                        ->remove('max')->add('max', null, array('required' => false, 'attr' => array('class' => 'defaultTextActive', 'title' => 'enter maximum value (optional)')));
+                        ->remove('currentValue')->add('currentValue', null, array('required' => true, 'attr' => array('class' => 'defaultTextActive', 'title' => 'enter current value')));
                     break;
             }            
-            switch ($type)
-            {
-                case 'choice':
-                case 'multiplechoice':
-                    $form->remove('min');
-                    $form->add('min', 'hidden');
-                    $form->remove('max');
-                    $form->add('max', 'hidden');
-                    break;
-                case 'integer':                
-                case 'float':                
-                case 'time':                
-                case 'datetime':                
-                    $form->remove('choices');
-                    $form->add('choices', 'hidden');
-                    break;
-                default:                
-                    $form->remove('choices');
-                    $form->add('choices', 'hidden');
-                    $form->remove('min');
-                    $form->add('min', 'hidden');
-                    $form->remove('max');
-                    $form->add('max', 'hidden');
-            }
+            //echo $this->admin->getFormFieldDescription('filter')->getHelp();    
+            /*$form->remove('filter');
+            $form->add('filter', 'hidden');*/
     }
 }

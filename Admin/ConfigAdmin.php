@@ -18,10 +18,9 @@ class ConfigAdmin extends Admin {
             ->add('currentValue')
             ->add('description')
             ->add('type')
-            ->add('min')
-            ->add('max')
-            ->add('choices')
+            ->add('filter')
             ->add('section')
+            ->add('created')
             ->add('updated')
         ;
     }
@@ -41,15 +40,11 @@ class ConfigAdmin extends Admin {
             ->add('currentValue', null, array('required' => true, 'attr' => array('class' => 'defaultText', 'title' => 'enter current value')))
             ->add('description', null, array('required' => true, 'attr' => array('class' => 'defaultText', 'title' => 'enter description')))
             ->add('type', 'choice', array('choices' => array('string' => 'string', 'textarea' => 'textarea', 'html' => 'html', 'integer' => 'integer', 'float' => 'float', 'date' => 'date', 'datetime' => 'datetime', 'choice' => 'choice', 'multiplechoice' => 'multiplechoice')))
-            ->add('min', null, array('required' => false, 'attr' => array('class' => 'defaultText', 'title' => 'enter minimum value (optional)')))
-            ->add('max', null, array('required' => false, 'attr' => array('class' => 'defaultText', 'title' => 'enter maximum value (optional)')))
-            ->add('choices', null, array('required' => false, 'attr' => array('class' => 'defaultText', 'title' => 'enter comma separated choices (optional)')))
+            ->add('filter', null, array('required' => false, 'attr' => array('class' => 'defaultText', 'title' => 'optional')))
             ->add('section', null, array('attr' => array('class' => 'defaultText', 'title' => 'enter section name (optional)')))
             ->add('updated', 'datetime', array('required' => false, 'read_only' => true))
             ->setHelps(array(
-                'min' => 'If you enter a minimum value, it will act as a constraint on the default and current value.',
-                'max' => 'If you enter a maximum value, it will act as a constraint on the default and current value.',
-                'choices' => 'Only for data types choice and multiplechoice.',
+                'filter' => 'formats: (value: integer, float or string): min:value max:value range:value..value choices:choice1,choice2,choice3 regexp:/regular expresion/',
                 'section' => 'The section parameter is provided for your convenience and for better readability if you have a large number of settings.'
             ))
         ;
@@ -61,70 +56,82 @@ class ConfigAdmin extends Admin {
         {
             case 'date':
             case 'datetime':
-                if (is_object($object->getDefaultValue())) $object->setDefaultValue($object->getDefaultValue()->getTimestamp());
+                /*if (is_object($object->getDefaultValue())) $object->setDefaultValue($object->getDefaultValue()->getTimestamp());
                 elseif ($object->getDefaultValue() != '') {$def = new \DateTime($object->getDefaultValue());$object->setDefaultValue($cur->getTimestamp());}
                 if (is_object($object->getCurrentValue())) $object->setCurrentValue($object->getCurrentValue()->getTimestamp());
                 elseif ($object->getCurrentValue() != '') {$cur = new \DateTime($object->getCurrentValue());$object->setCurrentValue($cur->getTimestamp());}
                 if (is_object($object->getMin())) $object->setMin($object->getMin()->getTimestamp());
                 elseif ($object->getMin() != '') {$min = new \DateTime($object->getMin());$object->setMin($min->getTimestamp());}
                 if (is_object($object->getMax())) $object->setMax($object->getMax()->getTimestamp());
-                elseif ($object->getMax() != '') {$max = new \DateTime($object->getMax());$object->setMax($max->getTimestamp());}
+                elseif ($object->getMax() != '') {$max = new \DateTime($object->getMax());$object->setMax($max->getTimestamp());}*/
                 break;
             case 'multiplechoice':
                 if (is_array($object->getDefaultValue())) $object->setDefaultValue(implode(',', $object->getDefaultValue()));
                 if (is_array($object->getCurrentValue())) $object->setCurrentValue(implode(',', $object->getCurrentValue()));
                 break;
         }
-        if ($object->getMin() != '' AND $object->getMax() != '' AND $object->getMin() > $object->getMax())
-        {
-            $errorElement
-                ->with('min')
-                ->assertMin(array('limit' => $object->getMin(), 'message' => 'Error: Min / max outside the specified limits'))
-                ->addViolation('Max should not be less than min')
-                ->end()
-            ;
-            $errorElement
-                ->with('max')
-                ->assertMin(array('limit' => $object->getMin(), 'message' => 'Error: Min / max outside the specified limits'))
-                ->addViolation('Max should not be less than min')
-                ->end()
-            ;
-        }
-        if ($object->getMin() != '' AND $object->getMin() > $object->getDefaultValue())
-        {
-            $errorElement
-                ->with('defaultValue')
-                ->assertMin(array('limit' => $object->getMin(), 'message' => 'Error: Default value outside the specified limits'))
-                ->addViolation('Default value should not be less than min')
-                ->end()
-            ;
-        }
-        if ($object->getMax() != '' AND $object->getMax() < $object->getDefaultValue())
-        {
-            $errorElement
-                ->with('defaultValue')
-                ->assertMax(array('limit' => $object->getMax(), 'message' => 'Error: default value outside the specified limits'))
-                ->addViolation('Default value should not be greater than max')
-                ->end()
-            ;
-        }
-        if ($object->getMin() != '' AND $object->getMin() > $object->getCurrentValue())
-        {
-            $errorElement
-                ->with('currentValue')
-                ->assertMin(array('limit' => $object->getMin(), 'message' => 'Error: current value outside the specified limits'))
-                ->addViolation('Current value should not be less than min')
-                ->end()
-            ;
-        }
-        if ($object->getMax() != '' AND $object->getMax() < $object->getCurrentValue())
-        {
-            $errorElement
-                ->with('currentValue')
-                ->assertMin(array('limit' => $object->getMax(), 'message' => 'Error: current value outside the specified limits'))
-                ->addViolation('Current value should not be greater than max')
-                ->end()
-            ;
+        $filter = $object->getFilter();
+        if (!empty($filter) AND $separatorPos = strpos($filter, ':')) {
+            $filterType = strtolower(substr($filter, 0, $separatorPos));
+            $filterValue = substr($filter, $separatorPos+1);
+            switch ($filterType) {
+                case 'min':
+                    if ($filterValue > $object->getDefaultValue())
+                        $errorElement
+                            ->with('defaultValue')
+                            ->assertRange(array('min' => $object->getFilter()))
+                            ->addViolation('defaultValue should not be less than min')
+                            ->end();
+                    if ($filterValue > $object->getCurrentValue())
+                        $errorElement
+                            ->with('currentValue')
+                            ->assertRange(array('min' => $object->getFilter()))
+                            ->addViolation('currentValue should not be less than min')
+                            ->end();
+                    break;
+                case 'max':
+                    if ($filterValue < $object->getDefaultValue())
+                        $errorElement
+                            ->with('defaultValue')
+                            ->assertRange(array('max' => $object->getFilter()))
+                            ->addViolation('defaultValue should not be major than max')
+                            ->end();
+                    if ($filterValue < $object->getCurrentValue())
+                        $errorElement
+                            ->with('currentValue')
+                            ->assertRange(array('max' => $object->getFilter()))
+                            ->addViolation('currentValue should not be major than max')
+                            ->end();
+                    break;
+                case 'range':default;
+                    $filterArray = explode('..', $filterValue);
+                    if (count($filterArray)<2) break;
+                    if ($filterArray[0] > $object->getDefaultValue())
+                        $errorElement
+                            ->with('defaultValue')
+                            ->assertRange(array('min' => $object->getFilter()))
+                            ->addViolation('defaultValue should not be less than min')
+                            ->end();
+                    if ($filterArray[0] > $object->getCurrentValue())
+                        $errorElement
+                            ->with('currentValue')
+                            ->assertRange(array('min' => $object->getFilter()))
+                            ->addViolation('currentValue should not be less than min')
+                            ->end();
+                    if ($filterArray[1] < $object->getDefaultValue())
+                        $errorElement
+                            ->with('defaultValue')
+                            ->assertRange(array('max' => $object->getFilter()))
+                            ->addViolation('defaultValue should not be major than max')
+                            ->end();
+                    if ($filterArray[1] < $object->getCurrentValue())
+                        $errorElement
+                            ->with('currentValue')
+                            ->assertRange(array('max' => $object->getFilter()))
+                            ->addViolation('currentValue should not be major than max')
+                            ->end();
+                    break;
+            }
         }
     }
 

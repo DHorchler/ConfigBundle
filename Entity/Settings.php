@@ -1,17 +1,16 @@
 <?php
-// src/DHorchler/ConfigBundle/Entity/Settings.php
 namespace DHorchler\ConfigBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity
  * @ORM\Table(name="dh_settings")
  */
-class Settings
-{
-    public function __construct()
-    {
+class Settings {
+
+    public function __construct() {
         $this->updated = new \DateTime;
         $this->name = '';
     }
@@ -34,6 +33,7 @@ class Settings
      * @ORM\Column(name="defaultvalue", type="string", nullable=true)
      */
     protected $defaultValue;
+
     /**
      * @var string
      * @ORM\Column(name="currentvalue", type="string", length=1024, nullable=true)
@@ -48,51 +48,27 @@ class Settings
 
     /**
      * @var string
-     * @ORM\Column(name="type", type="string")
+     * @ORM\Column(name="type", type="string", options={"comment" = "string, integer, float, date, datetime, choice, multiplechoice"})
      */
     protected $type;
 
     /**
      * @var string
-     * @ORM\Column(name="min", type="string", nullable=true)
+     * @ORM\Column(name="filter", type="string", options={"comment" = "formats: (value: integer, float or string): min:value max:value range:value..value choice:choice1,choice2,choice3 regexp:/regular expresion/"}, nullable=true)
      */
-    protected $min;
-
-    /**
-     * @var string
-     * @ORM\Column(name="max", type="string", nullable=true)
-     */
-    protected $max;
-
-    /**
-     * @var string
-     * @ORM\Column(name="choices", type="string", nullable=true)
-     */
-    protected $choices;
+    protected $filter;
 
     /**
      * @var string
      * @ORM\Column(name="section", type="string", nullable=true)
      */
+
     protected $section;
 
     /**
      * @ORM\Column(type="datetime")
      */
     protected $updated;
-
-    
-
-    /**
-     * Get id
-     *
-     * @return integer 
-     */
-    public function setId($id)
-    {
-        $this->id = $id;
-        return $this;
-    }
 
     /**
      * Get id
@@ -105,6 +81,29 @@ class Settings
     }
 
     /**
+     * Set name
+     *
+     * @param string $name
+     * @return Settings
+     */
+    public function setName($name)
+    {
+        $this->name = $name;
+
+        return $this;
+    }
+
+    /**
+     * Get name
+     *
+     * @return string 
+     */
+    public function getName()
+    {
+        return $this->name;
+    }
+
+    /**
      * Set defaultValue
      *
      * @param string $defaultValue
@@ -113,7 +112,7 @@ class Settings
     public function setDefaultValue($defaultValue)
     {
         $this->defaultValue = $defaultValue;
-    
+
         return $this;
     }
 
@@ -136,7 +135,7 @@ class Settings
     public function setCurrentValue($currentValue)
     {
         $this->currentValue = $currentValue;
-    
+
         return $this;
     }
 
@@ -159,7 +158,7 @@ class Settings
     public function setDescription($description)
     {
         $this->description = $description;
-    
+
         return $this;
     }
 
@@ -172,56 +171,6 @@ class Settings
     {
         return $this->description;
     }
-    public function __toString()
-    {
-        return 'Settings:'.$this->name;
-    }
-
-    /**
-     * Set updated
-     *
-     * @param \DateTime $updated
-     * @return Settings
-     */
-    public function setUpdated($updated)
-    {
-        $this->updated = $updated;
-    
-        return $this;
-    }
-
-    /**
-     * Get updated
-     *
-     * @return \DateTime 
-     */
-    public function getUpdated()
-    {
-        return $this->updated;
-    }
-
-    /**
-     * Set name
-     *
-     * @param string $name
-     * @return Settings
-     */
-    public function setName($name)
-    {
-        $this->name = $name;
-    
-        return $this;
-    }
-
-    /**
-     * Get name
-     *
-     * @return string 
-     */
-    public function getName()
-    {
-        return $this->name;
-    }
 
     /**
      * Set type
@@ -232,7 +181,7 @@ class Settings
     public function setType($type)
     {
         $this->type = $type;
-    
+
         return $this;
     }
 
@@ -247,72 +196,26 @@ class Settings
     }
 
     /**
-     * Set min
+     * Set filter
      *
-     * @param string $min
+     * @param string $filter
      * @return Settings
      */
-    public function setMin($min)
+    public function setFilter($filter)
     {
-        $this->min = $min;
-    
+        $this->filter = $filter;
+
         return $this;
     }
 
     /**
-     * Get min
+     * Get filter
      *
      * @return string 
      */
-    public function getMin()
+    public function getFilter()
     {
-        return $this->min;
-    }
-
-    /**
-     * Set max
-     *
-     * @param string $max
-     * @return Settings
-     */
-    public function setMax($max)
-    {
-        $this->max = $max;
-    
-        return $this;
-    }
-
-    /**
-     * Get max
-     *
-     * @return string 
-     */
-    public function getMax()
-    {
-        return $this->max;
-    }
-
-    /**
-     * Set choices
-     *
-     * @param string $choices
-     * @return Settings
-     */
-    public function setChoices($choices)
-    {
-        $this->choices = $choices;
-    
-        return $this;
-    }
-
-    /**
-     * Get choices
-     *
-     * @return string 
-     */
-    public function getChoices()
-    {
-        return $this->choices;
+        return $this->filter;
     }
 
     /**
@@ -324,7 +227,7 @@ class Settings
     public function setSection($section)
     {
         $this->section = $section;
-    
+
         return $this;
     }
 
@@ -336,5 +239,33 @@ class Settings
     public function getSection()
     {
         return $this->section;
+    }
+
+    /**
+     * Set updated
+     *
+     * @param \DateTime $updated
+     * @return Settings
+     */
+    public function setUpdated($updated)
+    {
+        $this->updated = $updated;
+
+        return $this;
+    }
+
+    /**
+     * Get updated
+     *
+     * @return \DateTime 
+     */
+    public function getUpdated()
+    {
+        return $this->updated;
+    }
+    
+    public function __toString()
+    {
+        return 'Settings:'.$this->name;
     }
 }
