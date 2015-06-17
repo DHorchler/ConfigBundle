@@ -5,10 +5,11 @@ namespace DHorchler\ConfigBundle\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\HttpFoundation\Request;
 
 class AdminController extends \Sonata\AdminBundle\Controller\CRUDController
 {
-    public function editAction($id = null)
+    public function editAction($id = null, Request $request = null)
     {
         // the key used to lookup the template
         $templateKey = 'edit';
